@@ -8,24 +8,74 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int _count=0;
+  List <String> task = [];
+  TextEditingController _taskcontroller = TextEditingController();
 
-  incrementCount(){
+  _addTask(){
+    if(_taskcontroller.text.isNotEmpty){
+      setState(() {
+        task.add(_taskcontroller.text);
+        _taskcontroller.clear();
+      });
+    }
+  }
+
+  _removeTask(int index){
+      setState(() {
+        task.removeAt(index);
+      });
+  }
+
+  _removeall(){
     setState(() {
-      _count++;
+      task.clear();
     });
-
-    print(_count);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-          child: Text(_count.toString(),style:TextStyle(fontSize: 40,color:Colors.black),),
+      appBar: AppBar(
+        title: Text(
+          "Simple Todo List",
+          style: TextStyle(
+              fontSize: 30,
+              color: Colors.white,
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(onPressed: incrementCount,child: Icon(Icons.add),),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _taskcontroller,
+              decoration: InputDecoration(
+                  hintText: "Enter Your Task",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  suffixIcon:
+                      IconButton(onPressed: _addTask, icon: Icon(Icons.add))),
+            ),
+            SizedBox(),
+            
+            Expanded(
+              child: ListView.builder(
+                  itemCount: task.length,
+                  itemBuilder: (Context, index) {
+                    return Card(
+                      child: ListTile(
+                        title:Text(task[index]),
+                        trailing: IconButton(onPressed: ()=>_removeTask(index), icon:Icon(Icons.delete,color: Colors.red,)),
+                      ),
+                    );
+                  }),
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(onPressed:_removeall, backgroundColor:Colors.greenAccent, child: Icon(Icons.clear_all, color: Colors.black45,),),
     );
   }
 }
